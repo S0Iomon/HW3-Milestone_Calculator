@@ -74,8 +74,26 @@ public class Student {
         this.taGrade = taGrade;
     }
     
+    
     public int calculateFinalGrade (){
         return this.ms1Grade + this.ms2Grade + this.taGrade;
+    }
+    
+    //checks if all is valid before doing other actions
+    public boolean isValid() {
+        return name != null &&
+               course != null &&
+               section != null &&
+               studentNumber != 0 && 
+               (ms1Grade >= 0 && ms1Grade <= 25) && 
+               (ms2Grade >= 0 && ms2Grade <= 40) &&
+               (taGrade >= 0 && taGrade <= 35);
+    }
+    
+    //debugging
+    @Override
+    public String toString (){
+        return ""+this.name+" has been added to the list!";
     }
 }
 
