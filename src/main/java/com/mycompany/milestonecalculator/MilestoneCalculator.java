@@ -272,7 +272,6 @@ public class MilestoneCalculator {
                     Students.add(student);
                     studentFinalGradeLabel.setText(String.valueOf(student.calculateFinalGrade()) +".00");
                 }
-                System.out.println(Students.toString());
             }
         });
     }
