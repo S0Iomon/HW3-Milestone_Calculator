@@ -10,6 +10,9 @@ import java.util.regex.*;
 import javax.swing.border.Border;
 import java.util.ArrayList;
 import javax.swing.border.EmptyBorder;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+
 /**
  *
  * @author Ezio Auditore
@@ -28,25 +31,26 @@ public class MilestoneCalculator {
                    studentSectionLabel, studentMS1Label, studentMS2Label, studentTALabel, 
                    studentFinalGradeLabel;
     
-    
-            
     private JTextField studentNumberText, studentNameText, studentMS1Text, 
                        studentMS2Text, studentTAText, studentSectionText;
     
     private JComboBox studentCourseDropdown;
     
-    private JButton calculateGradesButton = new JButton("Calculate Final Grade");
+    private JButton calculateGradesButton = new JButton("=");
     
-    private Font FranklinBold = new Font("Franklin Gothic Demi", Font.PLAIN, 14);
-    private Font FranklinRegular = new Font("Franklin Gothic Book", Font.PLAIN, 14);
+    private Font HelveticaBold = new Font("Helvetica", Font.BOLD, 14);
+    private Font HelveticaRegular = new Font("Helvetica", Font.PLAIN, 14);
     private Border elementBorder = BorderFactory.createLineBorder(Color.decode("#DCBDAC"), 1);
     
     private String chosenCourse;
     
+    private JButton invalidDialogButton = new JButton("OK");
+    
     public void showFrame(){
         calculatorFrame = new JFrame();
         calculatorFrame.setTitle("Milestone Calculator");
-        calculatorFrame.setMinimumSize(new Dimension(500, 450));
+        calculatorFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("mscalc.png"));
+        calculatorFrame.setMinimumSize(new Dimension(550, 455));
         calculatorFrame.setSize(700, 420);
         calculatorFrame.setLocationRelativeTo(null);
         calculatorFrame.add(calculatorContainer);
@@ -80,7 +84,7 @@ public class MilestoneCalculator {
         studentTALabel = new JLabel("Terminal Assessment Grade:");
         studentTAText = new JTextField(20);
         
-        calculateGradesButton.setPreferredSize(new Dimension(200, 30));
+        calculateGradesButton.setPreferredSize(new Dimension(35, 35));
         
         studentFinalGradeLabel = new JLabel("0.00");
         
@@ -92,30 +96,89 @@ public class MilestoneCalculator {
         studentTALabel,studentFinalGradeLabel};
         
         JComponent allTexts[] = {studentNumberText, studentNameText, studentCourseDropdown,
-        studentSectionText, studentMS1Text, studentMS2Text,studentTAText, calculateGradesButton,};
+        studentSectionText, studentMS1Text, studentMS2Text,studentTAText, calculateGradesButton, invalidDialogButton,};
         
         
         for (JComponent label: allLabels){
-           label.setFont(FranklinBold);
+           label.setFont(HelveticaBold);
            label.setForeground(Color.decode("#502B2D"));
            label.setBackground(Color.decode("#DCBDAC"));
         }
         
         
         for (JComponent text: allTexts){
-            text.setFont(FranklinRegular);
+            text.setFont(HelveticaRegular);
             text.setBorder(BorderFactory.createCompoundBorder(elementBorder, new EmptyBorder(2, 3, 2, 3)));
             text.setBackground(Color.decode("#502B2D"));
             text.setForeground(Color.decode("#DCBDAC"));
         }
+        studentFinalGradeLabel.setFont(new Font("Courier New", Font.BOLD, 18));
         
-        studentFinalGradeLabel.setFont(new Font("Franklin Gothic Demi", Font.PLAIN, 20));
+        calculateGradesButton.setFont(new Font("Helvetica", Font.BOLD, 18));
+        calculateGradesButton.setFocusPainted(false);
+        
+        studentCourseDropdown.setFocusable(false);
+        
+        
+        studentCourseDropdown.setUI(new BasicComboBoxUI() {
+            
+            //DEFAULT BLUE HIGHLIGHT AROUND BORDER FIX
+            @Override
+            protected void installDefaults(){
+                super.installDefaults();
+                studentCourseDropdown.setBorder(BorderFactory.createLineBorder(Color.decode("#502B2D"), 1));
+                studentCourseDropdown.setBackground(Color.decode("#502B2D"));
+                studentCourseDropdown.setForeground(Color.decode("#DCBDAC"));
+                studentCourseDropdown.setOpaque(true);
+            }
+            
+            //ARROW COLOR FIX
+            @Override
+            protected JButton createArrowButton(){
+                JButton dropdownArrowButton = new JButton("\u25BE");
+                dropdownArrowButton.setFont(new Font("Dialog", Font.PLAIN, 20));
+                dropdownArrowButton.setBorder(BorderFactory.createEmptyBorder());
+                dropdownArrowButton.setForeground(Color.decode("#502B2D"));
+                dropdownArrowButton.setBackground(Color.decode("#DCBDAC"));
+                return dropdownArrowButton;
+            }
+            
+            //ENSURES COLOR IS REGISTERED
+            @Override
+            public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+               g.setColor(studentCourseDropdown.getBackground());
+               g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+            }
+        });
+        
+        //COMBO BOX HIGHLIGHTED CUSTOMIZED COLOR
+        studentCourseDropdown.setRenderer(new DefaultListCellRenderer(){
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus){
+                
+                Component comboBox = super.getListCellRendererComponent(list, value, index,
+                        isSelected, cellHasFocus);
+                        
+                if (isSelected){
+                    comboBox.setBackground(Color.decode("#DCBDAC"));
+                    comboBox.setForeground(Color.decode("#502B2D"));
+                }
+                return comboBox;
+            }
+        });
         
         //OPTIONPANE DESIGN
         UIManager.put("OptionPane.background", Color.decode("#DCBDAC"));
         UIManager.put("Panel.background", Color.decode("#DCBDAC"));
+        
         UIManager.put("Button.background", Color.decode("#502B2D"));
         UIManager.put("Button.foreground", Color.decode("#DCBDAC"));
+        UIManager.put("Button.focus", Color.decode("#c7ab9b"));
+        UIManager.put("Button.select", Color.decode("#301a1c"));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#502B2D"), 5));
+        UIManager.put("Button.setFocusPainted", false);
+        UIManager.put("Button.setFocusable", false);
     }
     
     public void showContainer(){
@@ -188,7 +251,7 @@ public class MilestoneCalculator {
         
         //FINAL GRADE
         calculatorLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, studentFinalGradeLabel, 0, SpringLayout.HORIZONTAL_CENTER, calculatorContainer);
-        calculatorLayout.putConstraint(SpringLayout.NORTH, studentFinalGradeLabel, 20, SpringLayout.SOUTH, calculateGradesButton);
+        calculatorLayout.putConstraint(SpringLayout.NORTH, studentFinalGradeLabel, 10, SpringLayout.SOUTH, calculateGradesButton);
         calculatorContainer.setSize(400, 400);
         calculatorContainer.setLayout(calculatorLayout); 
     }
